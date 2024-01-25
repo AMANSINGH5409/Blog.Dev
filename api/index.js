@@ -13,6 +13,17 @@ app.use(express.json());
 app.use("/api/user/", userRoutes);
 app.use("/api/auth/", authRoutes);
 
+app.use((err, req, res, next) => {
+  const stateCode = err.statusCode || 500;
+  const message = err.message || "Internal Server Error";
+
+  res.status(stateCode).json({
+    success: false,
+    stateCode,
+    message,
+  });
+});
+
 mongoose
   .connect(process.env.MONGO_URL)
   .then(() => {
